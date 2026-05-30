@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(
     page_title="Saudi Unemployment Forecasting",
-    page_icon="📊",
     layout="centered"
 )
 
@@ -20,28 +19,38 @@ try:
 except:
     model_loaded = False
 
-st.title("📊 Saudi Unemployment Rate Forecasting System")
-st.caption("AI3104 — AI System Design | Umm Al-Qura University")
+# ==================== HEADER ====================
+st.title("Saudi Unemployment Rate Forecasting System")
 st.markdown("---")
 
+# ==================== DATA ====================
 historical = {
-    "Quarter": ["2023-Q1","2023-Q2","2023-Q3","2023-Q4",
-                "2024-Q1","2024-Q2","2024-Q3","2024-Q4",
-                "2025-Q1","2025-Q2","2025-Q3","2025-Q4"],
+    "Quarter": [
+        "2023-Q1","2023-Q2","2023-Q3","2023-Q4",
+        "2024-Q1","2024-Q2","2024-Q3","2024-Q4",
+        "2025-Q1","2025-Q2","2025-Q3","2025-Q4"
+    ],
     "Actual Rate (%)": [8.67, 8.45, 8.81, 7.78,
                         7.61, 7.09, 7.81, 7.00,
                         6.32, 6.78, 7.48, 7.24]
 }
 df_hist = pd.DataFrame(historical)
 
-st.subheader("🔮 National Unemployment Rate Forecast")
+actual_test    = [8.67, 8.45, 8.81, 7.78, 7.61, 7.09, 7.81, 7.00, 6.32, 6.78, 7.48, 7.24]
+predicted_test = [7.91, 8.71, 8.51, 8.09, 7.72, 8.21, 8.11, 7.31, 6.96, 7.53, 7.41, 6.70]
+test_quarters  = ["2023-Q1","2023-Q2","2023-Q3","2023-Q4",
+                  "2024-Q1","2024-Q2","2024-Q3","2024-Q4",
+                  "2025-Q1","2025-Q2","2025-Q3","2025-Q4"]
+
+# ==================== FORECAST ====================
+st.subheader("National Unemployment Rate Forecast")
 
 if not model_loaded:
     st.error("Model file not found. Please ensure sarima_model.pkl is in the app directory.")
     st.stop()
 
 mae = 0.4551
-forecast_values = model.forecast(steps=2)
+forecast_values   = model.forecast(steps=2)
 forecast_quarters = ["2026-Q1", "2026-Q2"]
 
 forecast_data = []
@@ -55,80 +64,181 @@ for i in range(2):
     })
 df_forecast = pd.DataFrame(forecast_data)
 
+# ── Metrics ──
 col1, col2 = st.columns(2)
 with col1:
+    delta1 = df_forecast.iloc[0]["Predicted Rate (%)"] - 7.24
     st.metric(
         label="2026-Q1 Forecast",
         value=f"{df_forecast.iloc[0]['Predicted Rate (%)']:.2f}%",
-        delta=f"{df_forecast.iloc[0]['Predicted Rate (%)'] - 7.24:.2f}pp vs 2025-Q4"
+        delta=f"{delta1:+.2f} percentage points vs 2025-Q4"
     )
-    st.caption(f"Interval: [{df_forecast.iloc[0]['Lower Bound (%)']:.2f}% — {df_forecast.iloc[0]['Upper Bound (%)']:.2f}%]")
+    st.caption(f"Confidence interval: [{df_forecast.iloc[0]['Lower Bound (%)']:.2f}% — {df_forecast.iloc[0]['Upper Bound (%)']:.2f}%]")
 
 with col2:
+    delta2 = df_forecast.iloc[1]["Predicted Rate (%)"] - df_forecast.iloc[0]["Predicted Rate (%)"]
     st.metric(
         label="2026-Q2 Forecast",
         value=f"{df_forecast.iloc[1]['Predicted Rate (%)']:.2f}%",
-        delta=f"{df_forecast.iloc[1]['Predicted Rate (%)'] - df_forecast.iloc[0]['Predicted Rate (%)']:.2f}pp vs Q1"
+        delta=f"{delta2:+.2f} percentage points vs 2026-Q1"
     )
-    st.caption(f"Interval: [{df_forecast.iloc[1]['Lower Bound (%)']:.2f}% — {df_forecast.iloc[1]['Upper Bound (%)']:.2f}%]")
+    st.caption(f"Confidence interval: [{df_forecast.iloc[1]['Lower Bound (%)']:.2f}% — {df_forecast.iloc[1]['Upper Bound (%)']:.2f}%]")
 
 st.markdown("---")
-st.subheader("📈 Historical Trend + Forecast")
 
-fig, ax = plt.subplots(figsize=(11, 5))
+# ==================== CHART 1: Historical + Forecast ====================
+st.subheader("Chart 1 — Historical Trend and Forecast")
 
-ax.plot(df_hist["Quarter"], df_hist["Actual Rate (%)"],
-        color="#1f4e79", marker="o", linewidth=2, markersize=6, label="Historical (Actual)")
+fig1, ax1 = plt.subplots(figsize=(11, 5))
 
-connect_q = [df_hist["Quarter"].iloc[-1]] + forecast_quarters
-connect_v = [df_hist["Actual Rate (%)"].iloc[-1]] + [df_forecast.iloc[i]["Predicted Rate (%)"] for i in range(2)]
+ax1.plot(df_hist["Quarter"], df_hist["Actual Rate (%)"],
+         color="#1f4e79", marker="o", linewidth=2, markersize=6, label="Historical (Actual)")
+
+connect_q  = [df_hist["Quarter"].iloc[-1]] + forecast_quarters
+connect_v  = [df_hist["Actual Rate (%)"].iloc[-1]] + [df_forecast.iloc[i]["Predicted Rate (%)"] for i in range(2)]
 connect_lo = [df_hist["Actual Rate (%)"].iloc[-1]] + [df_forecast.iloc[i]["Lower Bound (%)"] for i in range(2)]
 connect_hi = [df_hist["Actual Rate (%)"].iloc[-1]] + [df_forecast.iloc[i]["Upper Bound (%)"] for i in range(2)]
 
-ax.plot(connect_q, connect_v,
-        color="#2e75b6", marker="s", linewidth=2, markersize=7, linestyle="--", label="Forecast (SARIMA)")
-ax.fill_between(connect_q, connect_lo, connect_hi,
-                alpha=0.15, color="#2e75b6", label=f"Confidence Interval (±{mae} pp)")
-ax.axhline(y=7.0, color="green", linestyle=":", linewidth=1.5, alpha=0.8, label="Vision 2030 Target (7%)")
-ax.axvline(x=11.5, color="gray", linestyle="--", linewidth=1, alpha=0.5)
-ax.text(11.6, 11.5, "Forecast →", fontsize=8, color="gray")
+ax1.plot(connect_q, connect_v,
+         color="#2e75b6", marker="s", linewidth=2, markersize=7, linestyle="--", label="Forecast (SARIMA)")
+ax1.fill_between(connect_q, connect_lo, connect_hi,
+                 alpha=0.15, color="#2e75b6", label=f"Confidence Interval (+/- {mae} pp)")
+ax1.axhline(y=7.0, color="green", linestyle=":", linewidth=1.5, alpha=0.8, label="Vision 2030 Target (7%)")
+ax1.axvline(x=11.5, color="gray", linestyle="--", linewidth=1, alpha=0.4)
+ax1.text(11.6, 11.5, "Forecast", fontsize=8, color="gray")
 
 for i in range(2):
-    ax.annotate(
+    ax1.annotate(
         f"{df_forecast.iloc[i]['Predicted Rate (%)']:.2f}%",
         xy=(forecast_quarters[i], df_forecast.iloc[i]["Predicted Rate (%)"]),
         xytext=(0, 12), textcoords="offset points",
         ha="center", fontsize=9, fontweight="bold", color="#2e75b6"
     )
 
-ax.set_ylabel("Unemployment Rate (%)", fontsize=11)
-ax.set_xlabel("Quarter", fontsize=11)
-ax.tick_params(axis="x", rotation=45)
-ax.legend(fontsize=9)
-ax.grid(axis="y", alpha=0.3)
-ax.set_ylim(4, 12)
+ax1.set_ylabel("Unemployment Rate (%)", fontsize=11)
+ax1.set_xlabel("Quarter", fontsize=11)
+ax1.tick_params(axis="x", rotation=45)
+ax1.legend(fontsize=9)
+ax1.grid(axis="y", alpha=0.3)
+ax1.set_ylim(4, 13)
 plt.tight_layout()
-st.pyplot(fig)
+st.pyplot(fig1)
 
 st.markdown("---")
-st.subheader("📋 Forecast Details")
+
+# ==================== CHART 2A: Vision 2030 Comparison ====================
+st.subheader("Chart 2 — Forecast vs Vision 2030 Target")
+
+vision_target = 7.0
+all_quarters  = forecast_quarters
+all_predicted = [df_forecast.iloc[i]["Predicted Rate (%)"] for i in range(2)]
+all_lower     = [df_forecast.iloc[i]["Lower Bound (%)"] for i in range(2)]
+all_upper     = [df_forecast.iloc[i]["Upper Bound (%)"] for i in range(2)]
+
+fig2, (ax2a, ax2b) = plt.subplots(1, 2, figsize=(12, 5))
+fig2.suptitle("Forecast vs Vision 2030 Target", fontsize=13, fontweight="bold")
+
+# ── Bar chart ──
+bar_colors = ["#c0392b" if v > vision_target else "#27ae60" for v in all_predicted]
+bars = ax2a.bar(all_quarters, all_predicted, color=bar_colors, width=0.4, zorder=3)
+ax2a.axhline(y=vision_target, color="green", linestyle="--", linewidth=2, label="Vision 2030 Target (7%)")
+ax2a.errorbar(all_quarters, all_predicted,
+              yerr=[[p - lo for p, lo in zip(all_predicted, all_lower)],
+                    [hi - p  for p, hi in zip(all_predicted, all_upper)]],
+              fmt="none", color="gray", capsize=6, linewidth=1.5)
+
+for bar, val in zip(bars, all_predicted):
+    diff = val - vision_target
+    sign = "+" if diff > 0 else ""
+    ax2a.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.1,
+              f"{val:.2f}%\n({sign}{diff:.2f} pp)", ha="center", fontsize=9, fontweight="bold")
+
+ax2a.set_ylabel("Unemployment Rate (%)")
+ax2a.set_title("Predicted Rate vs Target")
+ax2a.set_ylim(0, 11)
+ax2a.legend(fontsize=9)
+ax2a.grid(axis="y", alpha=0.3, zorder=0)
+
+# ── Gauge-style text summary ──
+ax2b.axis("off")
+for i, (q, pred) in enumerate(zip(all_quarters, all_predicted)):
+    diff   = pred - vision_target
+    status = "Above Target" if diff > 0 else "Below Target"
+    color  = "#c0392b" if diff > 0 else "#27ae60"
+    y      = 0.75 - i * 0.40
+
+    ax2b.text(0.5, y + 0.12, q, ha="center", fontsize=13, fontweight="bold",
+              transform=ax2b.transAxes)
+    ax2b.text(0.5, y - 0.01, f"Forecast: {pred:.2f}%", ha="center", fontsize=11,
+              transform=ax2b.transAxes)
+    ax2b.text(0.5, y - 0.12, f"{status}  ({'+' if diff > 0 else ''}{diff:.2f} pp)",
+              ha="center", fontsize=11, color=color, fontweight="bold",
+              transform=ax2b.transAxes)
+
+ax2b.text(0.5, 0.05, f"Vision 2030 Target: {vision_target}%",
+          ha="center", fontsize=10, color="green", style="italic",
+          transform=ax2b.transAxes)
+ax2b.set_title("Status vs Target")
+
+plt.tight_layout()
+st.pyplot(fig2)
+
+st.markdown("---")
+
+# ==================== CHART 3: Actual vs Predicted ====================
+st.subheader("Chart 3 — Model Accuracy: Actual vs Predicted (Test Set 2023–2025)")
+
+fig3, ax3 = plt.subplots(figsize=(11, 5))
+
+ax3.plot(test_quarters, actual_test,
+         color="#1f4e79", marker="o", linewidth=2, markersize=6, label="Actual")
+ax3.plot(test_quarters, predicted_test,
+         color="#e74c3c", marker="s", linewidth=2, markersize=6, linestyle="--", label="Predicted (SARIMA)")
+
+for i, (a, p) in enumerate(zip(actual_test, predicted_test)):
+    ax3.plot([test_quarters[i], test_quarters[i]], [a, p],
+             color="gray", linewidth=1, linestyle=":", alpha=0.6)
+
+ax3.axhline(y=7.0, color="green", linestyle=":", linewidth=1.5, alpha=0.7, label="Vision 2030 Target (7%)")
+ax3.set_ylabel("Unemployment Rate (%)", fontsize=11)
+ax3.set_xlabel("Quarter", fontsize=11)
+ax3.tick_params(axis="x", rotation=45)
+ax3.legend(fontsize=9)
+ax3.grid(axis="y", alpha=0.3)
+ax3.set_ylim(4, 12)
+
+ax3.text(0.5, 0.96, f"MAE = {mae:.4f} pp  |  RMSE = 0.5428  |  R2 = 0.4524",
+         transform=ax3.transAxes, ha="center", fontsize=9,
+         style="italic", color="gray",
+         bbox=dict(facecolor="lightyellow", alpha=0.8, edgecolor="lightgray"))
+
+plt.tight_layout()
+st.pyplot(fig3)
+
+st.markdown("---")
+
+# ==================== FORECAST TABLE ====================
+st.subheader("Forecast Details")
 st.dataframe(df_forecast, use_container_width=True, hide_index=True)
 
 st.markdown("---")
-with st.expander("ℹ️ Model Information"):
+
+# ==================== MODEL INFO ====================
+with st.expander("Model Information"):
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Model", "SARIMA")
     col2.metric("MAE", "0.4551 pp")
     col3.metric("RMSE", "0.5428")
-    col4.metric("R²", "0.45")
+    col4.metric("R2", "0.45")
     st.write("**Training Period:** Q2 2016 — Q2 2023 (27 quarters)")
     st.write("**Test Period:** Q3 2023 — Q4 2025 (12 quarters)")
     st.write("**SARIMA Order:** (1,1,1)(1,1,1,4)")
 
-st.warning("""
-⚠️ Disclaimer: These forecasts are statistical projections generated by a SARIMA
-time-series model trained on historical data. They are not guaranteed outcomes.
-All results should be interpreted as estimates to support decision-making.
-""")
+# ==================== DISCLAIMER ====================
+st.warning(
+    "Disclaimer: These forecasts are statistical projections generated by a SARIMA "
+    "time-series model trained on historical data. They are not guaranteed outcomes. "
+    "All results should be interpreted as estimates to support decision-making."
+)
 
 st.caption("Data source: DataSaudi — Ministry of Economy and Planning of Saudi Arabia")
