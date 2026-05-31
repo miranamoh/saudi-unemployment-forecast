@@ -48,24 +48,21 @@ except:
 st.title("Saudi Unemployment Rate Forecasting ")
 st.markdown("---")
 
-# ==================== DATA ====================
-historical = {
-    "Quarter": [
-        "2023-Q1","2023-Q2","2023-Q3","2023-Q4",
-        "2024-Q1","2024-Q2","2024-Q3","2024-Q4",
-        "2025-Q1","2025-Q2","2025-Q3","2025-Q4"
-    ],
-    "Actual Rate (%)": [8.67, 8.45, 8.81, 7.78,
-                        7.61, 7.09, 7.81, 7.00,
-                        6.32, 6.78, 7.48, 7.24]
-}
-df_hist = pd.DataFrame(historical)
+# DATA (from results.json) 
+import json
 
-actual_test    = [8.67, 8.45, 8.81, 7.78, 7.61, 7.09, 7.81, 7.00, 6.32, 6.78, 7.48, 7.24]
-predicted_test = [7.91, 8.71, 8.51, 8.09, 7.72, 8.21, 8.11, 7.31, 6.96, 7.53, 7.41, 6.70]
-test_quarters  = ["2023-Q1","2023-Q2","2023-Q3","2023-Q4",
-                  "2024-Q1","2024-Q2","2024-Q3","2024-Q4",
-                  "2025-Q1","2025-Q2","2025-Q3","2025-Q4"]
+with open('results.json', 'r') as f:
+    results = json.load(f)
+
+mae            = results['mae']
+historical     = {
+    "Quarter": results['historical_quarters'],
+    "Actual Rate (%)": results['historical_rates']
+}
+df_hist        = pd.DataFrame(historical)
+actual_test    = results['actual_test']
+predicted_test = results['predicted_test']
+test_quarters  = results['test_quarters']
 
 # ==================== FORECAST ====================
 st.subheader("National Unemployment Rate Forecast")
