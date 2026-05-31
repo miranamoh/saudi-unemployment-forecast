@@ -8,7 +8,32 @@ st.set_page_config(
     page_title="Saudi Unemployment Forecasting",
     layout="centered"
 )
-
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #1a1f3a;
+        color: white;
+    }
+    
+    .stMetric {
+        background-color: #252b4a;
+        border-radius: 10px;
+        padding: 10px;
+    }
+    
+    h1, h2, h3 {
+        color: #5b9bd5 !important;
+    }
+    
+    .stDataFrame {
+        background-color: #252b4a;
+    }
+    
+    [data-testid="stExpander"] {
+        background-color: #252b4a;
+    }
+    </style>
+""", unsafe_allow_html=True)
 @st.cache_resource
 def load_model():
     return joblib.load("sarima_model.pkl")
