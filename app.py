@@ -71,7 +71,7 @@ if not model_loaded:
     st.error("Model file not found. Please ensure sarima_model.pkl is in the app directory.")
     st.stop()
 
-mae = 0.4551
+
 forecast_values   = model.forecast(steps=2)
 forecast_quarters = ["2026-Q1", "2026-Q2"]
 
