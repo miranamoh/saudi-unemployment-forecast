@@ -20,7 +20,7 @@ except:
     model_loaded = False
 
 # ==================== HEADER ====================
-st.title("Saudi Unemployment Rate Forecasting System")
+st.title("Saudi Unemployment Rate Forecasting ")
 st.markdown("---")
 
 # ==================== DATA ====================
@@ -87,7 +87,7 @@ with col2:
 st.markdown("---")
 
 # ==================== CHART 1: Historical + Forecast ====================
-st.subheader("Chart 1 — Historical Trend and Forecast")
+st.subheader(" Historical Trend and Forecast")
 
 fig1, ax1 = plt.subplots(figsize=(11, 5))
 
@@ -127,7 +127,7 @@ st.pyplot(fig1)
 st.markdown("---")
 
 # ==================== CHART 2A: Vision 2030 Comparison ====================
-st.subheader("Chart 2 — Forecast vs Vision 2030 Target")
+st.subheader("Forecast vs Vision 2030 Target")
 
 vision_target = 7.0
 all_quarters  = forecast_quarters
@@ -186,7 +186,7 @@ st.pyplot(fig2)
 st.markdown("---")
 
 # ==================== CHART 3: Actual vs Predicted ====================
-st.subheader("Chart 3 — Model Accuracy: Actual vs Predicted (Test Set 2023–2025)")
+st.subheader("Model Accuracy: Actual vs Predicted (Test Set 2023–2025)")
 
 fig3, ax3 = plt.subplots(figsize=(11, 5))
 
