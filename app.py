@@ -124,7 +124,7 @@ connect_hi = [df_hist["Actual Rate (%)"].iloc[-1]] + [df_forecast.iloc[i]["Upper
 ax1.plot(connect_q, connect_v,
          color="#2e75b6", marker="s", linewidth=2, markersize=7, linestyle="--", label="Forecast (SARIMA)")
 ax1.fill_between(connect_q, connect_lo, connect_hi,
-                 alpha=0.15, color="#2e75b6", label=f"Confidence Interval (+/- {mae} pp)")
+                 alpha=0.15, color="#2e75b6", label=f"Confidence Interval (+/- {mae:.4f} pp)")
 ax1.axhline(y=7.0, color="green", linestyle=":", linewidth=1.5, alpha=0.8, label="Vision 2030 Target (7%)")
 ax1.axvline(x=11.5, color="gray", linestyle="--", linewidth=1, alpha=0.4)
 ax1.text(11.6, 11.5, "Forecast", fontsize=8, color="gray")
