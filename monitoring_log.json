@@ -1,0 +1,35 @@
+{
+  "last_trained": "2026-06-08 19:28:22.942938",
+  "mae": 0.45514332947682284,
+  "rmse": 0.5427685334901237,
+  "r2": 0.45242176260995026,
+  "status": "OK",
+  "training_quarters": 27,
+  "test_quarters": 12,
+  "history": [
+    {
+      "date": "2026-06-08",
+      "mae": 0.45514332947682284,
+      "rmse": 0.5427685334901237,
+      "r2": 0.45242176260995026,
+      "status": "OK"
+    }
+  ],
+  "forecast_log": {
+    "forecast_generated": "2026-06-08 19:28:22.942952",
+    "forecasts": [
+      {
+        "quarter": "2026-Q1",
+        "predicted": 7.91,
+        "lower": 7.45,
+        "upper": 8.36
+      },
+      {
+        "quarter": "2026-Q2",
+        "predicted": 8.71,
+        "lower": 8.25,
+        "upper": 9.16
+      }
+    ]
+  }
+}
