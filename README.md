@@ -136,7 +136,8 @@ pip install -r requirements.txt
 | **Records** | 39 quarterly observations (Total category) |
 | **Columns** | Quarter, Gender, Unemployment Rate |
 
-> **Note:** The dataset is publicly available at DataSaudi. Due to licensing terms, it is not included in this repository. you can download it directly from the source.
+> **Note:** The dataset is publicly available at DataSaudi. The dataset is included in this repository:
+Unemployment-Rate-by-Gender.csv
 
 ---
 
