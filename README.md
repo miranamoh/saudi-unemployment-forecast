@@ -182,14 +182,6 @@ When new quarterly data is released by DataSaudi:
 **Course:** AI3104 — AI System Design | **Year:** 2026
 **Supervisor:** Dr. Hwazen Badwi
 **University:** Umm Al-Qura University
-
-| Member | ID |
-|--------|----|
-| aram alouni | 44510225 |
-| Mirana Alghamdi   | 445005808 | 
-| Khawlah Aljuaid  | 445001074 |  
-| amasi Alsahbi   | 445005698  |
-
 ---
 
 *Disclaimer: All forecasts are statistical projections and should not be interpreted as guaranteed outcomes.*
