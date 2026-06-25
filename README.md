@@ -177,7 +177,6 @@ When new quarterly data is released by DataSaudi:
 
 ---
 
-## Team
 
 **Course:** AI3104 — AI System Design | **Year:** 2026
 **Supervisor:** Dr. Hwazen Badwi
